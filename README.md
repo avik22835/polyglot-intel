@@ -2,8 +2,6 @@
 
 An MCP server that gives AI coding tools structural understanding of polyglot projects built with MetaCall. It parses your project, maps cross-language `metacall()` call graphs, and exposes tools so Claude or any MCP-compatible agent can list functions, trace execution chains, analyze change impact, and call functions live across language boundaries.
 
-Built for Google Summer of Code 2025 — MetaCall organization.
-
 ---
 
 ## Setup

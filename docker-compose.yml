@@ -1,0 +1,37 @@
+services:
+  metacall-intel:
+    build: .
+    image: metacall-intel
+    container_name: metacall-intel
+    restart: unless-stopped
+    volumes:
+      # Mount the user's project folder into /project inside the container.
+      # PROJECT_DIR is set in .env (e.g. PROJECT_DIR=C:/Users/Alice/myapp).
+      # Falls back to the current directory if not set.
+      - ${PROJECT_DIR:-.}:/project
+    environment:
+      - PROJECT_DIR=/project
+      - REGISTRY_PATH=/app/metacall-registry.json
+    ports:
+      - "8000:8000"   # MCP server — AI clients connect here
+      - "9000:9000"   # MetaCall FaaS execution engine
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+
+  # Optional tunnel — only starts when: docker-compose --profile tunnel up
+  # Exposes the MCP server over the internet via ngrok (for remote AI clients)
+  tunnel:
+    profiles: ["tunnel"]
+    image: ngrok/ngrok:latest
+    container_name: metacall-ngrok
+    restart: unless-stopped
+    network_mode: "service:metacall-intel"
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+    command: http localhost:8000 --log stdout
+    depends_on:
+      - metacall-intel

@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+metacall-registry.json
+tunnel.log
+cloudflared
+simulation/
+.DS_Store
